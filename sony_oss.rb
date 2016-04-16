@@ -45,6 +45,9 @@ end
 
 def print_product_category
   oss_global_h = {}
+  oss_global_num = 0
+  # cvs output
+  puts "\"product category\",model,unique model,oss,unique oss"
   @product_category.get_hash.each do |k, v|
     model_num = 0
     oss_num = 0
@@ -53,6 +56,7 @@ def print_product_category
     v.each do |e|
       model_num = model_num + e.model.size
       oss_num = oss_num + e.oss.size
+      oss_global_num = oss_global_num + e.oss.size
       e.model.each do |m|
         model_h[m] = 1
       end
@@ -61,9 +65,17 @@ def print_product_category
         oss_global_h[o] = 1
       end
     end
-    puts "category=\"#{k}\" model_num=#{model_num} oss_num=#{oss_num} model_unique=#{model_h.keys.size} oss_unique=#{oss_h.keys.size}"
+    # ruby command line
+    #puts "product category=\"#{k}\" model_num=#{model_num} oss_num=#{oss_num} model_unique=#{model_h.keys.size} oss_unique=#{oss_h.keys.size}"
+
+    # cvs output
+    puts "\"#{k}\",#{model_num},#{model_h.keys.size},#{oss_num},#{oss_h.keys.size}"
+    #
   end
+
+  puts "whole oss_num=#{oss_global_num}"
   puts "whole oss_unique=#{oss_global_h.keys.size}"
+
   open("sony_oss_list.txt", "w") do |f|
     oss_global_h.keys.sort.each do |k|
       f.puts "#{k}"
@@ -71,6 +83,9 @@ def print_product_category
   end
 end
 
+#
+# 製品モデル毎のOSSのページをスキャン
+#
 def scan_oss a_oss, url
   #puts "scan_oss: url=#{url}"
   charset = nil
@@ -90,6 +105,7 @@ end
 
 #
 # scan Products/Linux/XXX/Category0X.html
+# 製品カテゴリのページをスキャン
 #
 def scan_product url
   #puts "scan_product: url=#{url}"
@@ -108,19 +124,23 @@ def scan_product url
         next
       end
       td = tr.css('td')
-      name = td[0].inner_text # category name
+      name = td[0].inner_text.gsub(/"/,"") # product category name
       unless @product_category then
         @product_category = ProductCategory.new
       end
       ar = @product_category.push_category_array name
       ar.model = td[1].inner_text.gsub(/[\s"]/, "").split(/[,\/]/) # model list
       #puts "ar.model = #{ar.model}"
+      # 製品モデル毎のOSSのページにジャンプしてスキャン
       scan_oss ar.oss, URI.join(url, tr.css('a')[0].attribute('href').value)
       #puts "ar.oss = #{ar.oss}"
     end
   end
 end
 
+#
+# トップカテゴリのページをスキャンする
+#
 def scan_category url
   #puts "scan_category: url=#{url}"
   charset = nil
@@ -135,12 +155,13 @@ def scan_category url
     node.css('tr').each do |tr|
       category = tr.xpath('./th[@class="category"]').inner_text
       if category && category.length > 0 then # 1個目のtrがcategory。2個目のtrがURLを指定。
-        puts "category=#{category}"
+        #puts "category=#{category}"
       else
         tr.css('a').each do |a|
           uri = URI.join(url, a.attribute('href').value)
           unless h[uri] then
             h[uri] = true
+            # 製品カテゴリのページにジャンプしてスキャン
             scan_product uri
           end
         end
@@ -148,6 +169,10 @@ def scan_category url
     end
   end
 end
+
+#
+# main routine begin
+#
 
 # スクレイピング先のURL
 url = 'http://oss.sony.net/Products/Linux/common/search.html'
@@ -166,6 +191,7 @@ doc = Nokogiri::HTML.parse(html, nil, charset)
 doc.xpath('//table[@class="w480"]').each do |node|
   # link
   node.css('a').each do |anode|
+    # トップカテゴリ別のページに飛んでスキャン
     scan_category URI.join(url, anode.attribute('href').value)
   end
 end

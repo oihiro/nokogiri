@@ -1,5 +1,9 @@
+# -*- coding: undecided -*-
 #
 # sony_oss_list_analyze.rb
+#
+# sony_oss.rbが出力したファイルを解析し，バージョン違い等も
+# ユニークとして数を数える。リストを得る。
 #
 
 oss_global_unique = {}
