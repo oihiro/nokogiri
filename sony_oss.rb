@@ -9,6 +9,7 @@ require 'uri'
 require 'open-uri'
 require 'nokogiri'
 require 'optparse'
+require 'pg'
 
 #
 # 製品カテゴリとOSSを計数するために最初に作成したシンプルなクラス
@@ -114,6 +115,46 @@ class ThreeLayerCategory
     end
   end
 
+  def create_tbl connection, tblname
+    connection.exec(<<-"EOS")
+      CREATE TABLE #{tblname} (
+        top_ctg VARCHAR(80),
+        snd_ctg VARCHAR(80),
+        thd_ctg VARCHAR(80),
+        model VARCHAR(80),
+        oss VARCHAR(256)
+      );
+    EOS
+  end
+
+  def insert_tbl connection, tbl
+    i = 1
+    @h.keys.sort.each do |f|
+      @h[f].keys.sort.each do |s|
+        @h[f][s].keys.sort.each do |t|
+          @h[f][s][t].keys.sort.each do |m|
+            @h[f][s][t][m].keys.sort.each do |o|
+              begin
+                connection.exec(<<-EOS)
+                  INSERT INTO #{tbl} (top_ctg, snd_ctg, thd_ctg, model, oss)
+                  VALUES(\'#{f}\', \'#{s}\', \'#{t}\', \'#{m}\', \'#{o}\');
+                EOS
+              rescue => e
+                p e
+                puts "#{f},#{s},#{t},#{m},#{o}"
+                raise e
+              end
+              if (i % 1000 == 0) then
+                now "insert #{i}"
+              end
+              i = i + 1
+            end
+          end
+        end
+      end
+    end
+  end
+
 end
 
 def dbgputs str
@@ -185,7 +226,10 @@ def scan_oss a_oss, url
   doc = Nokogiri::HTML.parse(html, nil, charset)
   doc.xpath('//table[@class="w90"]').each do |node|
     node.css('li').each do |li|
-      a_oss.push li.inner_text.strip
+      anode = li.css('a')
+      if (!anode[0].inner_text.include?("\n")) then
+        a_oss.push anode[0].inner_text.strip
+      end
     end
   end
 end
@@ -268,9 +312,15 @@ def scan_category url
   end
 end
 
+def now msg
+  STDERR.puts "#{msg}:#{Time.now}"
+end
+public :now
+
 #
 # main routine begin
 #
+now "start."
 
 # スクレイピング先のURL
 # トップカテゴリのリストが並ぶページ
@@ -282,6 +332,9 @@ opt.on('--total') {|v| $OPTS[:total] = v}
 opt.on('--category') {|v| $OPTS[:category] = v}
 opt.on('--osslist=file') {|v| $OPTS[:osslist] = v}
 opt.on('--debug') {|v| $OPTS[:debug] = v}
+opt.on('--tlctg_print') {|v| $OPTS[:tlctg_print] = v}
+opt.on('--tlctg_db') {|v| $OPTS[:tlctg_db] = v}
+opt.on('--tlctg_createtbl=TBL') {|v| $OPTS[:tlctg_createtbl] = v}
 opt.parse!(ARGV)
 
 $threelayercategory = ThreeLayerCategory.new
@@ -306,7 +359,29 @@ doc.xpath('//table[@class="w480"]').each do |node|
   end
 end
 
+now "site parsing finished."
+
 print_product_category
 
-$threelayercategory.print_all
+if ($OPTS[:tlctg_print]) then
+  $threelayercategory.print_all
+end
+
+if ($OPTS[:tlctg_db]) then
+  # connect to the PostgreSQL DB.
+  # User, Password, Databaseはデフォルト設定
+  now "connecting to the DB."
+  connection = PG::connect(:host => "localhost")
+
+  begin
+    if ($OPTS[:tlctg_createtbl]) then
+      connection.exec("drop table if exists #{$OPTS[:tlctg_createtbl]};")
+      $threelayercategory.create_tbl connection, $OPTS[:tlctg_createtbl]
+      $threelayercategory.insert_tbl connection, $OPTS[:tlctg_createtbl]
+    end
+  ensure
+    connection.finish
+  end
+end
+
 
