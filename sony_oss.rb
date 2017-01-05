@@ -263,7 +263,33 @@ def scan_product url
       end
       if (!name.to_s.empty?) then # !(nil or empty)  nil.to_s -> "" 空欄の行がある誤りへの対策
         ar = $product_category.push_category_array name
+        # モデル名を得る最初の方式
         ar.model = td[1].inner_text.gsub(/[\s"]/, "").split(/[,\/]/) # model list
+        # 第二の方式
+        # 完璧ではない。相反するモデル記述があり、もっと正確に行おうとすると複雑化する
+=begin
+        inner_text = td[1].inner_text
+        dbgputs "model_full = #{inner_text}"
+        inner_text.gsub!(/\s*\([^\)]*\)\s*/) { |matched|
+          matched.gsub(/\//, "&slash;").gsub(/\s/, "&space;")
+        }
+        if (/,/ =~ inner_text) then
+          ar.model = inner_text.split(/\s*,\s*/)
+        elsif (/\// =~ inner_text) then
+          ar.model = inner_text.split(/\s*\/\s*/)
+        elsif (/\s/ =~ inner_text) then
+          ar.model = inner_text.split(/\s+/)
+        else
+          ar.model = []
+          ar.model[0] = inner_text
+        end
+        ar.model.each_index do |i|
+          if (ar.model[i]) then
+            ar.model[i].gsub!(/&slash;/, "/")
+            ar.model[i].gsub!(/&space;/, " ")
+          end
+        end
+=end
         dbgputs "ar.model = #{ar.model}"
         # 製品モデル毎のOSSのページにジャンプしてスキャン
         if (!ar.model.empty?) then

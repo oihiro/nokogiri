@@ -1,0 +1,80 @@
+top_ctg|thd_ctg|modelcnt|osscnt
+Audio|A/V Receiver|14|105
+Audio|AVC/AVN|15|31
+Audio|Compact Audio System|1|31
+Audio|Digital Media Player|195|129
+Audio|Digital Media Player Accessary|1|2
+Audio|HDD Audio Component|8|173
+Audio|Home Audio System|2|22
+Audio|Home Theatre System|4|52
+Audio|IC Recorder|11|15
+Audio|Navigation Module|1|6
+Audio|Network Audio System|18|160
+Audio|PND(Portable Navigation Device)|53|65
+Audio|Personal Audio System|8|54
+Audio|Reader for Android|6|6
+Audio|Reader for PC/Mac|2|3
+Audio|Reader for Sony Tablet|1|1
+Audio|Sound Bar|5|34
+Audio|e-Book Reader|9|56
+Audio|eBook Transfer for Reader|1|1
+Digital Paper|Digital Paper|10|47
+Handycam / Cyber-shot / α|Digital Still Camera|147|98
+Handycam / Cyber-shot / α|Interchangeable Lens Digital Camera|36|61
+Handycam / Cyber-shot / α|Mobile HD Snap Camera|1|1
+Handycam / Cyber-shot / α|Others|6|34
+Handycam / Cyber-shot / α|Video Camera|49|127
+Others|Concept Prototype|1|214
+Others|Development Tools|3|48
+Others|Remote Controller|8|25
+Others|Skin View Camera|1|15
+Others|multifunctional light|1|107
+Photo Viewer / Information Viewer (dash)|Digital Photo Frame|5|3
+Photo Viewer / Information Viewer (dash)|Information Alarm Clock|2|2
+Professional|AVCHD|1|13
+Professional|Anycast Station|1|19
+Professional|Cinema Camera|5|79
+Professional|Digital Signage|1|16
+Professional|Functional Camera Block|1|10
+Professional|HDCAM-SR VTR|1|17
+Professional|IP Live Production System|6|64
+Professional|LocationPorter|4|1
+Professional|Medical Recorder|2|6
+Professional|Multi Image Processor|1|154
+Professional|NXCAM|7|47
+Professional|Network Camera|71|120
+Professional|Network RX Station|1|1
+Professional|Network Surveillance Recorder|5|734
+Professional|Network Video Management System|4|3
+Professional|Optical Disc Archive|4|241
+Professional|Professional Disc System XDCAM|21|266
+Professional|Remote Camera|4|93
+Professional|SRMASTER|5|60
+Professional|System Camera|15|123
+Professional|Video Communication System|14|143
+Professional|Video Switcher|12|216
+Professional|Wireless Adapter|4|70
+Professional|XDCAM|17|127
+Professional|XDCAM/EX|5|143
+Projector|Data Projector|177|38
+Projector|Mobile Projector|2|36
+Projector|PC Free Module|2|55
+Projector|Portable Projector|2|24
+Projector|Video Projector|21|23
+Support|Mobile application|1|1
+TV|Digital TV|1361|309
+TV|Internet TV|4|46
+TV|Internet TV Box|6|80
+TV|Media Player|14|45
+TV|Network TV Box|1|10
+TV|Wireless Link Set|1|14
+Tablet Device|Sony Tablet|27|36
+VAIO|Desktop PC|1|23
+VAIO|Wireless Router|1|1
+Video|Blu-ray Disc / DVD Home Theatre System|63|85
+Video|Blu-ray Player|67|125
+Video|Home Entertainment Server|2|46
+Video|Network Media Player|1|14
+Video|Video Recorder|59|102
+Video|Wireless Server|2|32
+(78 rows)
