@@ -1,0 +1,79 @@
+"product category",model,unique model,oss,unique oss
+"Digital TV",2020,1512,2201,379
+"Network TV Box",1,1,10,10
+"Media Player",14,14,190,45
+"Internet TV",4,4,46,46
+"Internet TV Box",7,6,140,80
+"Wireless Link Set",1,1,14,14
+"Video Recorder",64,64,265,102
+"Blu-ray Player",71,70,293,102
+"Blu-ray Disc / DVD Home Theatre System",63,63,102,55
+"Network Media Player",1,1,14,14
+"Wireless Server",2,2,32,32
+"Home Entertainment Server",2,2,46,46
+"Wireless Router",1,1,1,1
+"Desktop PC",1,1,23,23
+"Video Camera",52,52,541,128
+"Digital Still Camera",148,148,542,98
+"Interchangeable Lens Digital Camera",38,38,393,66
+"Mobile HD Snap Camera",1,1,1,1
+"Others",6,6,70,34
+"Digital Photo Frame",5,5,3,3
+"Information Alarm Clock",2,2,2,2
+"Network Audio System",18,18,510,160
+"HDD Audio Component",8,8,247,173
+"Digital Media Player",201,195,456,129
+"Digital Media Player Accessary",1,1,2,2
+"A/V Receiver",16,16,189,105
+"IC Recorder",11,11,28,15
+"Home Theatre System",4,4,89,52
+"Home Audio System",4,4,44,22
+"Sound Bar",9,9,136,34
+"Personal Audio System",9,9,74,54
+"Compact Audio System",1,1,31,31
+"Mobile Application",1,1,1,1
+"PND(Portable Navigation Device)",61,53,204,70
+"AVC/AVN",15,15,43,34
+"Navigation Module",1,1,6,6
+"e-Book Reader",12,9,241,56
+"eBook Transfer for Reader",1,1,1,1
+"Reader for Sony Tablet",1,1,1,1
+"Reader for Android",6,6,6,6
+"Reader for PC/Mac",2,2,3,3
+"Network RX Station",1,1,1,1
+"Video Switcher",13,13,238,238
+"Professional Disc System XDCAM",21,21,431,355
+"Anycast Station",1,1,19,19
+"Video Communication System",14,14,186,143
+"Network Camera",113,113,169,128
+"Network Surveillance Recorder",5,5,849,734
+"Medical Recorder",2,2,6,6
+"Network Video Management System",4,4,4,3
+"HDCAM-SR VTR",1,1,17,17
+"Digital Signage",1,1,16,16
+"NXCAM",8,8,98,47
+"LocationPorter",4,4,1,1
+"Multi Image Processor",1,1,154,154
+"System Camera",18,18,289,123
+"Cinema Camera",5,5,105,70
+"SRMASTER",5,5,92,60
+"XDCAM",26,23,888,128
+"XDCAM/EX",8,6,261,149
+"IP Live Production System",8,8,64,64
+"Optical Disc Archive",5,5,251,251
+"Wireless Adapter",5,4,127,70
+"AVCHD",1,1,13,13
+"Remote Camera",7,7,96,96
+"Functional Camera Block",1,1,10,10
+"Data Projector",196,196,62,39
+"Video Projector",22,22,46,23
+"PC Free Module",2,2,55,55
+"Mobile Projector",2,2,45,36
+"Portable Projector",2,2,48,24
+"Sony Tablet",85,27,122,39
+"Digital Paper",19,13,351,115
+"Developer Tools",1,1,2,2
+"Skin View Camera",1,1,15,15
+"Remote Controller",11,11,231,27
+"Concept Prototype",1,1,219,219
+"Mobile application",1,1,1,1

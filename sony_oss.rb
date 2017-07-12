@@ -33,11 +33,12 @@ class ProductCategory
   def new_category_array name
     @hash[name] = Array.new
   end
-
-  # name = 製品カテゴリ
-  # nameはhashのキー。そのhashの値にはModelOssの配列が入る。
+  
+  # push_category_array : 製品カテゴリ名をキーに持つハッシュに、モデルリストとOSSリストを格納するためのオブジェクトを格納する
+  # name = 製品カテゴリ名
+  # nameはhashのキーになる。そのhashの値にはModelOssの配列が格納される。
   # 本メソッドは、呼ばれるとModelOssオブジェクトが新規作成され、配列にpushされる。値を格納するオブジェクトを予め生成することになる。
-  # 既にキーとして存在しているnameに対して本メソッドが呼ばれたときはModelOssの配列は作成されず、単にModelOssオブジェクトが新規作成されるだけなので、その製品カテゴリに追加されることになる。
+  # 既にキーとして存在しているnameに対して本メソッドが呼ばれたときはModelOssの配列は作成されず、単にModelOssオブジェクトが新規作成され、その製品カテゴリに追加されることになる。
   # 戻り値：新規作成されたModelOssオブジェクト
   def push_category_array name
     unless @hash[name] then
@@ -173,7 +174,7 @@ def print_product_category
   $product_category.get_hash.each do |k, v|
     model_num = 0
     oss_num = 0
-    model_h = {}
+    model_h = {} # unique modelを数えるためのハッシュ。その製品カテゴリでmodel名が重複しなければ、unique modelとしている。
     oss_h = {}
     v.each do |e|
       model_num = model_num + e.model.size
@@ -219,9 +220,15 @@ def scan_oss a_oss, url
   charset = nil
   i = 0
 
-  html = open(url) do |f|
-    charset = f.charset
-    f.read
+  begin
+    html = open(url) do |f|
+      charset = f.charset
+      f.read
+    end
+  rescue => e  # 404 Not Found -> OpenURI::HTTPErrorが発生
+    #p e
+    dbgputs "#{url}: #{e}"
+    return nil # このページはスキップ
   end
   doc = Nokogiri::HTML.parse(html, nil, charset)
   doc.xpath('//table[@class="w90"]').each do |node|
@@ -234,6 +241,41 @@ def scan_oss a_oss, url
   end
 end
 
+def scan_product_in_DI url
+  dbgputs "scan_product_in_DI: url=#{url}"
+  charset = nil
+  i = 0
+  name = nil
+  ar = nil
+
+  html = open(url) do |f|
+    charset = f.charset
+    f.read
+  end
+  doc = Nokogiri::HTML.parse(html, nil, charset)
+  doc.xpath('//table[@class="w100 bgC"]').each do |node|
+    node.css('td').each do |td|
+      if i == 0 then
+        i = 1
+	name = td.inner_text
+        ar = $product_category.push_category_array name
+      else
+        i = 0
+	ar.model = td.inner_text.split(/[,\/]/)
+        dbgputs "ar.model = #{ar.model}"
+        # 製品モデル毎のOSSのページにジャンプしてスキャン
+        if (!ar.model.empty?) then
+          $threelayercategory.set_thd_ctg name
+          $threelayercategory.set_models ar.model
+          scan_oss ar.oss, URI.join(url, td.css('a')[0].attribute('href').value)
+          dbgputs "ar.oss = #{ar.oss}"
+          $threelayercategory.set_osses ar.oss
+        end
+      end
+    end   			
+  end
+end
+
 #
 # scan Products/Linux/XXX/Category0X.html
 # 製品カテゴリ(category - model/module)のページをスキャン
@@ -243,6 +285,11 @@ def scan_product url
   dbgputs "scan_product: url=#{url}"
   charset = nil
   i = 0
+
+  if url.request_uri =~ %r{Products/Linux/DI/category01.html} then
+    scan_product_in_DI url
+    return nil
+  end
 
   html = open(url) do |f|
     charset = f.charset
@@ -257,7 +304,7 @@ def scan_product url
       end
       td = tr.css('td')
       name = td[0].inner_text.gsub(/"/,"") # get product category name
-      #dbgputs "name = #{name}"
+      #dbgputs "product_category_name = #{name}"
       unless $product_category then
         $product_category = ProductCategory.new
       end
@@ -325,7 +372,9 @@ def scan_category url
         $threelayercategory.set_snd_ctg category
       else
         tr.css('a').each do |a|
-          uri = URI.join(url, a.attribute('href').value)
+	  href = a.attribute('href').value.sub(/#[^#]*$/, "")  # #より後は削除
+	  dbgputs "href=#{href}"
+          uri = URI.join(url, href)
           # ここで第三カテゴリを示す文字列は取得しない。ジャンプ先で取得できるので。
           unless h[uri] then
             h[uri] = true # 既にジャンプしたページならば飛ばない
@@ -346,7 +395,7 @@ public :now
 #
 # main routine begin
 #
-now "start."
+now "start"
 
 # スクレイピング先のURL
 # トップカテゴリのリストが並ぶページ
@@ -385,7 +434,7 @@ doc.xpath('//table[@class="w480"]').each do |node|
   end
 end
 
-now "site parsing finished."
+now "site parsing finished"
 
 print_product_category
 
