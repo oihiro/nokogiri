@@ -102,14 +102,16 @@ class ThreeLayerCategory
     end
   end
   
-  def print_all
-    @h.keys.sort.each do |f|
-      @h[f].keys.sort.each do |s|
-        @h[f][s].keys.sort.each do |t|
-          @h[f][s][t].keys.sort.each do |m|
-            @h[f][s][t][m].keys.sort.each do |o|
-              puts "#{f},#{s},#{t},#{m},#{o}"
-            end
+  def print_all file
+    open(file, "w") do |fi|
+      @h.keys.sort.each do |f|
+        @h[f].keys.sort.each do |s|
+          @h[f][s].keys.sort.each do |t|
+            @h[f][s][t].keys.sort.each do |m|
+              @h[f][s][t][m].keys.sort.each do |o|
+                fi.puts "#{f},#{s},#{t},#{m},#{o}"
+              end
+	    end
           end
         end
       end
@@ -203,8 +205,8 @@ def print_product_category
     puts "whole oss_unique=#{oss_global_h.keys.size}"
   end
 
-  if (!$OPTS[:osslist].to_s.empty?) then
-    open($OPTS[:osslist], "w") do |f|
+  if (!$OPTS[:uniqueosslist].to_s.empty?) then
+    open($OPTS[:uniqueosslist], "w") do |f|
       oss_global_h.keys.sort.each do |k|
         f.puts "#{k}"
       end
@@ -241,6 +243,9 @@ def scan_oss a_oss, url
   end
 end
 
+#
+# バグ対策で別メソッドを作成
+#
 def scan_product_in_DI url
   dbgputs "scan_product_in_DI: url=#{url}"
   charset = nil
@@ -405,9 +410,9 @@ $OPTS = {}
 opt = OptionParser.new
 opt.on('--total') {|v| $OPTS[:total] = v}
 opt.on('--category') {|v| $OPTS[:category] = v}
-opt.on('--osslist=file') {|v| $OPTS[:osslist] = v}
+opt.on('--uniqueosslist=file') {|v| $OPTS[:uniqueosslist] = v}
 opt.on('--debug') {|v| $OPTS[:debug] = v}
-opt.on('--tlctg_print') {|v| $OPTS[:tlctg_print] = v}
+opt.on('--tlctg_list=file') {|v| $OPTS[:tlctg_list] = v}
 opt.on('--tlctg_db') {|v| $OPTS[:tlctg_db] = v}
 opt.on('--tlctg_createtbl=TBL') {|v| $OPTS[:tlctg_createtbl] = v}
 opt.parse!(ARGV)
@@ -438,8 +443,8 @@ now "site parsing finished"
 
 print_product_category
 
-if ($OPTS[:tlctg_print]) then
-  $threelayercategory.print_all
+if ($OPTS[:tlctg_list]) then
+  $threelayercategory.print_all $OPTS[:tlctg_list]
 end
 
 if ($OPTS[:tlctg_db]) then
