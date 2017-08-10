@@ -96,8 +96,8 @@ class ThreeLayerCategory
   def set_osses _osses
     @last_models.each do |m|
       @h[@last_top][@last_snd][@last_thd][m] = {}
-      _osses.each do |o|
-        @h[@last_top][@last_snd][@last_thd][m][o] = true
+      _osses.each do |h|
+        @h[@last_top][@last_snd][@last_thd][m][h.keys[0]] = h[h.keys[0]]
       end
     end
   end
@@ -109,7 +109,7 @@ class ThreeLayerCategory
           @h[f][s].keys.sort.each do |t|
             @h[f][s][t].keys.sort.each do |m|
               @h[f][s][t][m].keys.sort.each do |o|
-                fi.puts "#{f},#{s},#{t},#{m},#{o}"
+                fi.puts "#{f},#{s},#{t},#{m},#{o},#{@h[f][s][t][m][o]}"
               end
 	    end
           end
@@ -237,7 +237,9 @@ def scan_oss a_oss, url
     node.css('li').each do |li|
       anode = li.css('a')
       if (!anode[0].inner_text.include?("\n")) then
-        a_oss.push anode[0].inner_text.strip
+        h = {}
+	h[anode[0].inner_text.strip] = URI.join(url, URI.encode(anode[0].attribute('href').value.strip)).to_s
+        a_oss.push h
       end
     end
   end
